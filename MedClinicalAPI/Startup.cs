@@ -27,12 +27,13 @@ namespace MedClinicalAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var connectionString = "";
             var mName = Environment.MachineName;
-            if (mName == "DESKTOP-QRMC7LQ")
-                connectionString = Configuration.GetConnectionString("IgorLocalDb");
-            else if (mName == "DESKTOP-V1GMI6E")
-                connectionString = Configuration.GetConnectionString("VasylLocalDb");
+            var connectionString = $"Data Source={mName}" + Configuration.GetConnectionString("LocalDb");
+
+            //if (mName == "DESKTOP-QRMC7LQ")
+            //    connectionString = Configuration.GetConnectionString("IgorLocalDb");
+            //else if (mName == "DESKTOP-V1GMI6E")
+            //    connectionString = Configuration.GetConnectionString("VasylLocalDb");
 
             services.AddEntityFrameworkSqlServer().AddDbContext<AppDbContext>(options =>
             {
@@ -53,6 +54,7 @@ namespace MedClinicalAPI
 
             services.AddControllers();
             var assembly = typeof(Startup).Assembly;
+            services.AddScoped(typeof(AppDbContext));
             services.AddMediatR(assembly);
             services.AddMvcCore().AddApiExplorer();
             services.AddSwaggerGen(options =>
